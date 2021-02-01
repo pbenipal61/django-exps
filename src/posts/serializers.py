@@ -1,5 +1,15 @@
 from rest_framework import serializers
 from .models import Post
+from django.contrib.auth.models import User
+
+
+class UserSerializer(serializers.ModelSerializer):
+    posts = serializers.PrimaryKeyRelatedField(many=True, queryset=Post.objects.all())
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'posts', 'owner']
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -16,4 +26,3 @@ class PostSerializer(serializers.ModelSerializer):
         instance.author = validated_data.get('author', instance.author)
         instance.save()
         return instance
-
