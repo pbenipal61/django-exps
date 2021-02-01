@@ -1,43 +1,48 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
+from django.http import Http404
 from .models import Post
 from .serializers import PostSerializer
 
 
-@csrf_exempt
-def post_list(request):
-    if request.method == 'GET':
+class PostList(APIView):
+    def get(self, request, format=None):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
-        return JsonResponse(serializer.data, safe=False)
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = PostSerializer(data=data)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
-def post_details(request, pk):
-    try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return HttpResponse(status=400)
+class PostDetails(APIView):
 
-    if request.method == 'GET':
+    def get_object(self, pk):
+        try:
+            return Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        post = self.get_object(pk)
         serializer = PostSerializer(post)
-        return JsonResponse(serializer.data)
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = PostSerializer(post, data=data)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        post = self.get_object(pk)
+        serializer = PostSerializer(post, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-    elif request.method == 'DELETE':
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        post = self.get_object(pk)
         post.delete()
-        return HttpResponse(status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
