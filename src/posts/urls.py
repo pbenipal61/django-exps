@@ -5,5 +5,5 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = format_suffix_patterns([
     path('posts/', PostList.as_view()),
-    path('posts/<int:pk>/', PostDetails.as_view())
+    path('posts/<str:pk>/', PostDetails.as_view())
 ])

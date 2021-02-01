@@ -77,8 +77,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        "CLIENT": {
+           "name": 'djongo',
+           "host": 'mongodb+srv://spring:Qwerty12@cluster0.pumz4.mongodb.net/Spring?retryWrites=true&w=majority',
+           "username": 'spring',
+           "password": 'Qwerty12',
+           "authMechanism": "SCRAM-SHA-1",
+        },
     }
 }
 
