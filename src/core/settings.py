@@ -85,6 +85,15 @@ DATABASES = {
            "password": 'Qwerty12',
            "authMechanism": "SCRAM-SHA-1",
         },
+        # 'LOGGING': {
+        #     'version': 1,
+        #     'loggers': {
+        #         'djongo': {
+        #             'level': 'DEBUG',
+        #             'propagate': True
+        #         }
+        #     }
+        # }
     }
 }
 

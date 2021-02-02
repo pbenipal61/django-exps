@@ -1,4 +1,12 @@
-from djongo import models
+from django import models
+from bson.objectid import InvalidId, ObjectId
+
+
+def validate_object_id(value):
+    if ObjectId(value):
+        return ObjectId(value)
+    else:
+        raise InvalidId
 
 
 class Post(models.Model):
@@ -11,3 +19,23 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['created']
+
+
+class Comment(models.Model):
+    _id = models.ObjectIdField()
+    by = models.CharField(max_length=100, blank=False)
+    published = models.BooleanField(default=True)
+    content = models.TextField()
+    post = models.ForeignKey(
+        to=Post,
+        to_field="_id",
+        on_delete=models.CASCADE,
+        validators=[validate_object_id]
+    )
+    objects = models.DjongoManager()
+
+    # def save(self, force_insert=False, force_update=False, using=None,
+    #          update_fields=None):
+    #     print("here")
+    #     self.post = ObjectId(self.post)
+    #     super(Comment, self).save(force_insert, force_update, using, update_fields)
