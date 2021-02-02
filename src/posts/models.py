@@ -1,4 +1,4 @@
-from django import models
+from djongo import models
 from bson.objectid import InvalidId, ObjectId
 
 
