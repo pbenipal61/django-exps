@@ -25,7 +25,7 @@ class PostDetails(generics.RetrieveUpdateDestroyAPIView):
     def get(self, request, *args, **kwargs):
         pk = dict(kwargs)['pk']
         post = self.get_post(pk)
-        serializer = PostSerializer(post)
+        serializer = PostSerializer(post, context={'request': request} )
         return Response(serializer.data)
 
     def put(self, request, *args, **kwargs):
@@ -62,5 +62,5 @@ class CommentDetails(generics.RetrieveUpdateDestroyAPIView):
     def get(self, request, *args, **kwargs):
         pk = dict(kwargs)['pk']
         post = self.get_comment(pk)
-        serializer = CommentSerializer(post)
+        serializer = CommentSerializer(post, context={'request': request})
         return Response(serializer.data)

@@ -23,18 +23,20 @@ class ObjectIdField(serializers.Field):
         return str(value)
 
 
-class PostSerializer(serializers.ModelSerializer):
+class PostSerializer(serializers.HyperlinkedModelSerializer):
     _id = ObjectIdField(read_only=True)
 
     class Meta:
         model = Post
         fields = [
-            # 'url',
+            '_id',
+            'url',
             # 'owner',
             'title',
             'content',
             'author'
         ]
+
     # title = serializers.CharField(max_length=100, allow_blank=False)
     # content = serializers.CharField()
     # author = serializers.CharField(max_length=100, allow_blank=False)
@@ -50,24 +52,28 @@ class PostSerializer(serializers.ModelSerializer):
     #     return instance
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
     _id = ObjectIdField(read_only=True)
     # by = serializers.CharField(max_length=100, allow_blank=False)
     # published = serializers.BooleanField(allow_null=True)
     # content = serializers.CharField()
-    post = ObjectIdField(
-        required=True
+    post = serializers.HyperlinkedRelatedField(
+        view_name='post-detail',
+        required=True,
+        queryset=Post.objects.all()
     )
 
     class Meta:
         model = Comment
         fields = [
+            'url',
             '_id',
             'by',
             'published',
             'content',
             'post'
         ]
+        depth: 1
 
     def create(self, validated_data):
         validated_data_with_post = {
