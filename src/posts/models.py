@@ -1,12 +1,4 @@
 from djongo import models
-from bson.objectid import InvalidId, ObjectId
-
-
-def validate_object_id(value):
-    if ObjectId(value):
-        return ObjectId(value)
-    else:
-        raise InvalidId
 
 
 class Post(models.Model):
@@ -16,6 +8,9 @@ class Post(models.Model):
     content = models.TextField()
     author = models.CharField(max_length=100, blank=False)
     objects = models.DjongoManager()
+
+    # def __str__(self):
+    #     return f"{self.title} - {self.author}"
 
     class Meta:
         ordering = ['created']
@@ -30,7 +25,7 @@ class Comment(models.Model):
         to=Post,
         to_field="_id",
         on_delete=models.CASCADE,
-        validators=[validate_object_id]
+        # validators=[validate_object_id]
     )
     objects = models.DjongoManager()
 

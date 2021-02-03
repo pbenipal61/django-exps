@@ -62,5 +62,5 @@ class CommentDetails(generics.RetrieveUpdateDestroyAPIView):
     def get(self, request, *args, **kwargs):
         pk = dict(kwargs)['pk']
         post = self.get_comment(pk)
-        serializer = PostSerializer(post)
+        serializer = CommentSerializer(post)
         return Response(serializer.data)
