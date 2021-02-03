@@ -23,31 +23,51 @@ class ObjectIdField(serializers.Field):
         return str(value)
 
 
-class PostSerializer(serializers.Serializer):
+class PostSerializer(serializers.ModelSerializer):
     _id = ObjectIdField(read_only=True)
-    title = serializers.CharField(max_length=100, allow_blank=False)
-    content = serializers.CharField()
-    author = serializers.CharField(max_length=100, allow_blank=False)
 
-    def create(self, validated_data):
-        return Post.objects.create(**validated_data)
+    class Meta:
+        model = Post
+        fields = [
+            # 'url',
+            # 'owner',
+            'title',
+            'content',
+            'author'
+        ]
+    # title = serializers.CharField(max_length=100, allow_blank=False)
+    # content = serializers.CharField()
+    # author = serializers.CharField(max_length=100, allow_blank=False)
 
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.content = validated_data.get('content', instance.content)
-        instance.author = validated_data.get('author', instance.author)
-        instance.save()
-        return instance
+    # def create(self, validated_data):
+    #     return Post.objects.create(**validated_data)
+    #
+    # def update(self, instance, validated_data):
+    #     instance.title = validated_data.get('title', instance.title)
+    #     instance.content = validated_data.get('content', instance.content)
+    #     instance.author = validated_data.get('author', instance.author)
+    #     instance.save()
+    #     return instance
 
 
-class CommentSerializer(serializers.Serializer):
+class CommentSerializer(serializers.ModelSerializer):
     _id = ObjectIdField(read_only=True)
-    by = serializers.CharField(max_length=100, allow_blank=False)
-    published = serializers.BooleanField(allow_null=True)
-    content = serializers.CharField()
+    # by = serializers.CharField(max_length=100, allow_blank=False)
+    # published = serializers.BooleanField(allow_null=True)
+    # content = serializers.CharField()
     post = ObjectIdField(
         required=True
     )
+
+    class Meta:
+        model = Comment
+        fields = [
+            '_id',
+            'by',
+            'published',
+            'content',
+            'post'
+        ]
 
     def create(self, validated_data):
         validated_data_with_post = {
